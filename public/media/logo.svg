@@ -1,1 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- fiery gradient -->
+    <linearGradient id="fireGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#ffb347"/>
+      <stop offset="50%" stop-color="#ffcc33"/>
+      <stop offset="100%" stop-color="#d2691e"/>
+    </linearGradient>
 
+    <!-- soft neon glow -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ffb347" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <!-- background circle -->
+  <circle cx="64" cy="64" r="60" fill="url(#fireGrad)" filter="url(#glow)"/>
+
+  <!-- stylized skull outline -->
+  <path d="
+      M 64 8
+      C 32 8 12 32 12 60
+      L 12 88
+      C 12 100 22 112 36 116
+      L 36 120
+      C 36 124 40 128 44 128
+      L 84 128
+      C 88 128 92 124 92 120
+      L 92 116
+      C 106 112 116 100 116 88
+      L 116 60
+      C 116 32 96 8 64 8
+      Z
+    "
+    fill="#0f0f0f"/>
+
+  <!-- eye sockets -->
+  <ellipse cx="46" cy="56" rx="12" ry="16" fill="#ffb347"/>
+  <ellipse cx="82" cy="56" rx="12" ry="16" fill="#ffb347"/>
+
+  <!-- nasal cavity -->
+  <polygon points="64,78 56,90 72,90" fill="#ffb347"/>
+
+  <!-- cross-bones (behind the skull) -->
+  <g stroke="#0f0f0f" stroke-width="8" stroke-linecap="round">
+    <line x1="20" y1="20" x2="108" y2="108"/>
+    <line x1="108" y1="20" x2="20" y2="108"/>
+  </g>
+
+  <!-- subtle highlight curve on skull -->
+  <path d="
+      M 64 20
+      C 80 20 100 40 100 60
+      L 100 68
+      C 100 72 96 76 92 76
+      L 36 76
+      C 32 76 28 72 28 68
+      L 28 60
+      C 28 40 48 20 64 20
+      Z
+    "
+    fill="#ffffff" fill-opacity="0.08"/>
+</svg>
