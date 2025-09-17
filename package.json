@@ -1,0 +1,30 @@
+{
+  "name": "BLUE-ENDPOINTS",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "23.x"
+    },
+  "author": "BLUE-DEMON",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "cheerio": "^1.0.0",
+    "form-data": "latest",
+    "yt-search": "^2.10.3",
+    "js-confuser": "^2.0.0",
+    "mongodb": "^6.17.0",
+    "tinyurl-api": "^1.0.1",
+    "dotenv": "^16.5.0",
+    "playwright": "latest",
+    "@huggingface/hub": "^2.4.1",
+    "express-fileupload": "^1.5.2",
+    "open-google-translator": "^1.0.5"
+  }
+}
