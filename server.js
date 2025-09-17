@@ -57,7 +57,7 @@ const uploadPlug = require('./plugins/upload');
 
 const blue = express();
 const PORT = process.env.PORT || 7860;
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = 'mongodb+srv://asmakev930h:Taloalob.1@aniplix.jsxe7pk.mongodb.net/?retryWrites=true&w=majority&appName=aniplix';
 const DB_NAME = process.env.DB_NAME || 'api_requests';
 const COLLECTION_NAME = 'request_counts';
 
