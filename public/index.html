@@ -1,126 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>BLUE DEMON API v2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLUE DEMON API</title>
+    <link rel="icon" href="./media/logo.svg" type="image/svg+xml">
 
-  <!-- page icon -->
-  <link rel="icon" href="./media/logo.svg" type="image/svg+xml">
-
-  <!-- fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <!-- icons -->
-  <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
-  <!-- custom font + styles -->
-  <link rel="stylesheet" href="styles.css"/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <!-- Liquid BG -->
-  <div class="liquid-bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="./media/logo.svg" alt="Blue Demon" class="brand-logo">
+                <div class="brand-text">
+                    <h1>BLUE DEMON</h1>
+                    <span>API V2</span>
+                </div>
+            </div>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="logo">
-      <!-- inline SVG logo -->
-      <img src="./media/logo.svg" alt="Blue Demon" width="28" height="28" style="filter: drop-shadow(0 0 4px #ffb347);">
-      <span>BLUE DEMON</span>
-    </div>
-    <nav>
-      <a href="#apis">APIs</a>
-      <a href="#docs">Docs</a>
-      <a href="#status">Status</a>
-    </nav>
-  </header>
+            <nav class="nav-menu">
+                <div class="nav-label">Main</div>
+                <a href="#" class="nav-item active" data-cat="All">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1 class="hero-title">
-      <span class="accent">BLUE</span> DEMON API
-    </h1>
-    <p class="hero-sub">Lightning-fast endpoints for everything you need.</p>
-    <button class="cta" onclick="scrollToSection('apis')">
-      <i class="fas fa-rocket"></i> Explore APIs
-    </button>
-  </section>
+                <div class="nav-label">Categories</div>
+                <div id="category-list" class="category-list">
+                    <!-- Categories injected by JS -->
+                </div>
 
-  <!-- Live Stats -->
-  <section id="status" class="stats">
-    <div class="stat-card">
-      <i class="fas fa-chart-bar"></i>
-      <span id="req-count">--</span>
-      <small>requests served</small>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-server"></i>
-      <span>50</span>
-      <small>endpoints</small>
-    </div>
-    <div class="stat-card">
-      <i class="fas fa-shield-alt"></i>
-      <span>99.9%</span>
-      <small>uptime</small>
-    </div>
-  </section>
+                <div class="nav-spacer"></div>
 
-  <!-- Filter + Search -->
-  <section id="apis" class="api-section">
-    <div class="controls">
-      <input id="search" placeholder="Search endpoints…"/>
-      <div class="pills" id="pills">
-        <button class="pill active" data-cat="All">All</button>
-      </div>
-    </div>
-    <div class="grid" id="grid"></div>
-    <button class="load-more" id="loadMore">Load more</button>
-  </section>
+                <div class="nav-label">Links</div>
+                <a href="#docs" class="nav-item">
+                    <i class="fas fa-book"></i>
+                    <span>Documentation</span>
+                </a>
+                <a href="https://wa.me/2347041039367" class="nav-item" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>Support</span>
+                </a>
+            </nav>
+        </aside>
 
-  <!-- Docs -->
-  <section id="docs" class="docs">
-    <h2>Quick Start</h2>
-    <div class="steps">
-      <article>
-        <div class="step-icon icon-1"></div>
-        <h3>1. Copy endpoint</h3>
-        <p>No keys needed for 90 % of endpoints.</p>
-      </article>
-      <article>
-        <div class="step-icon icon-2"></div>
-        <h3>2. Paste & Run</h3>
-        <p>Works in browser, curl, fetch, you name it.</p>
-      </article>
-      <article>
-        <div class="step-icon icon-3"></div>
-        <h3>3. Scale</h3>
-        <p>Built for high load & rapid prototyping.</p>
-      </article>
-    </div>
-  </section>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-bar">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
 
-  <!-- Footer -->
-  <footer>
-    <div class="social">
-      <a href="https://wa.me/2347041039367" title="Support"><i class="fab fa-whatsapp"></i></a>
-      <a href="#"><i class="fab fa-github"></i></a>
-    </div>
-    <small>&copy; 2024 BLUE DEMON API</small>
-  </footer>
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" placeholder="Search endpoints...">
+                </div>
 
-  <!-- Modal -->
-  <div class="modal" id="modal">
-    <div class="modal-backdrop"></div>
-    <div class="modal-card">
-      <button class="modal-close">&times;</button>
-      <h3 id="mTitle"></h3>
-      <div id="mBody"></div>
-    </div>
-  </div>
+                <div class="header-actions">
+                    <div class="status-indicator online">
+                        <span class="dot"></span>
+                        <span class="text">System Online</span>
+                    </div>
+                </div>
+            </header>
 
-  <script src="script.js"></script>
+            <!-- Content Area -->
+            <div class="content-wrapper">
+                <!-- Hero / Stats -->
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="req-count">--</span>
+                            <span class="stat-label">Total Requests</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-cube"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value">50+</span>
+                            <span class="stat-label">Endpoints</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value">99.9%</span>
+                            <span class="stat-label">Uptime</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Grid -->
+                <div class="section-header">
+                    <h2 id="section-title">All Endpoints</h2>
+                    <span class="badge" id="endpoint-count">0</span>
+                </div>
+
+                <div class="api-grid" id="grid">
+                    <!-- Cards injected by JS -->
+                </div>
+
+                <button class="load-more-btn" id="loadMore">
+                    <span>Load More</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+
+                <!-- Footer -->
+                <footer class="main-footer">
+                    <p>&copy; 2024 BLUE DEMON API. Built for developers.</p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-container">
+            <button class="modal-close">&times;</button>
+            <div class="modal-header">
+                <span class="modal-method" id="mMethod">GET</span>
+                <h3 class="modal-title" id="mTitle">Endpoint Name</h3>
+            </div>
+            <div class="modal-body" id="mBody">
+                <!-- Modal content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
