@@ -331,32 +331,46 @@ const baseURL = window.location.origin;
 /* ======  STATE  ====== */
 let filtered = [...endpoints];
 let page = 0;
-const perPage = 12;
+const perPage = 15;
 
 /* ======  DOM  ====== */
 const grid = document.getElementById("grid");
 const search = document.getElementById("search");
-const pills = document.getElementById("pills");
+const categoryList = document.getElementById("category-list");
 const loadBtn = document.getElementById("loadMore");
+const endpointCount = document.getElementById("endpoint-count");
+const sectionTitle = document.getElementById("section-title");
+
+// Modal DOM
 const modal = document.getElementById("modal");
 const mTitle = document.getElementById("mTitle");
 const mBody = document.getElementById("mBody");
+const mMethod = document.getElementById("mMethod");
+
+// Sidebar
+const menuToggle = document.getElementById("menuToggle");
+const sidebar = document.querySelector(".sidebar");
 
 /* ======  INIT  ====== */
 function init() {
-  createPills();
+  createSidebarCategories();
   render();
   bindEvents();
   fetchCount();
 }
 
 /* ======  CATEGORIES  ====== */
-function createPills() {
-  const cats = ["All", ...new Set(endpoints.map((e) => e.cat))];
-  pills.innerHTML = cats
-    .map((c) => `<button class="pill" data-cat="${c}">${c}</button>`)
+function createSidebarCategories() {
+  const cats = [...new Set(endpoints.map((e) => e.cat))].sort();
+
+  categoryList.innerHTML = cats
+    .map((c) => `
+      <div class="nav-item" data-cat="${c}">
+        <i class="fas fa-folder"></i>
+        <span>${c}</span>
+      </div>
+    `)
     .join("");
-  pills.firstElementChild.classList.add("active");
 }
 
 /* ======  RENDER  ====== */
@@ -365,72 +379,159 @@ function render(reset = true) {
     grid.innerHTML = "";
     page = 0;
   }
-  // start from page*perPage instead of 0
+
+  endpointCount.textContent = filtered.length;
+
+  // Calculate slice
   const slice = filtered.slice(page * perPage, (page + 1) * perPage);
+
   slice.forEach((e) => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <span class="cat">${e.cat}</span>
-      <h4>${e.name}</h4>
-      <p>${e.desc}</p>
-      <span class="method">${e.method}</span>
-      <span class="status ${e.isActive ? "active" : "inactive"}">${e.isActive ? "Active" : "Inactive"}</span>
+        <div class="card-header">
+            <span class="card-cat">${e.cat}</span>
+            <span class="method-badge">${e.method}</span>
+        </div>
+        <h4>${e.name}</h4>
+        <p>${e.desc}</p>
+        <div class="card-footer">
+            <div class="status-dot ${e.isActive ? "active" : "inactive"}"></div>
+            <div class="card-action">
+                <span>Try it</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </div>
     `;
     card.onclick = () => openModal(e);
     grid.appendChild(card);
   });
-  loadBtn.style.display = (page + 1) * perPage < filtered.length ? "block" : "none";
+
+  // Show/Hide Load More
+  loadBtn.style.display = (page + 1) * perPage < filtered.length ? "flex" : "none";
 }
 
 /* ======  SEARCH / FILTER  ====== */
 function bindEvents() {
+  // Search
   search.addEventListener("input", filter);
-  pills.addEventListener("click", (e) => {
-    if (!e.target.classList.contains("pill")) return;
-    pills.querySelector(".active")?.classList.remove("active");
-    e.target.classList.add("active");
-    filter();
+
+  // Category Click (Sidebar)
+  document.querySelector(".nav-menu").addEventListener("click", (e) => {
+    const item = e.target.closest(".nav-item");
+    if (!item) return;
+
+    // Handle "Main" links specially or specific links
+    if(item.getAttribute("href") && item.getAttribute("href").startsWith("#")) return;
+    if(item.target === "_blank") return;
+
+    e.preventDefault();
+
+    // Remove active class from all
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    item.classList.add("active");
+
+    const cat = item.dataset.cat;
+    if (cat) {
+        filter(cat);
+        sectionTitle.textContent = cat === "All" ? "All Endpoints" : `${cat} Endpoints`;
+        // On mobile, close sidebar after selection
+        if(window.innerWidth <= 768) {
+            sidebar.classList.remove("open");
+        }
+    }
   });
+
+  // Load More
   loadBtn.addEventListener("click", () => {
     page++;
     render(false);
   });
+
+  // Modal Close
   modal.querySelector(".modal-close").onclick = closeModal;
-  modal.querySelector(".modal-backdrop").onclick = closeModal;
+  modal.addEventListener("click", (e) => {
+      if(e.target === modal) closeModal();
+  });
+
+  // Mobile Menu
+  menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+  });
 }
 
-function filter() {
+function filter(category = null) {
   const term = search.value.toLowerCase();
-  const cat = pills.querySelector(".active").dataset.cat;
-  filtered = endpoints.filter(
-    (e) =>
-      (cat === "All" || e.cat === cat) &&
-      (e.name.toLowerCase().includes(term) ||
-        e.desc.toLowerCase().includes(term)),
-  );
+
+  // Determine current category if not passed
+  let activeCat = category;
+  if (!activeCat) {
+      const activeEl = document.querySelector(".nav-item.active");
+      activeCat = activeEl ? activeEl.dataset.cat : "All";
+  }
+
+  filtered = endpoints.filter((e) => {
+    const matchesCat = activeCat === "All" || e.cat === activeCat;
+    const matchesSearch = e.name.toLowerCase().includes(term) || e.desc.toLowerCase().includes(term);
+    return matchesCat && matchesSearch;
+  });
+
   render();
 }
 
 /* ======  MODAL  ====== */
 function openModal(e) {
   mTitle.textContent = e.name;
+  mMethod.textContent = e.method;
+
   const url = `${baseURL}${e.path}`;
+
+  // Parameters HTML
+  const paramsHtml = e.params.length
+    ? `<div class="param-list">
+         ${e.params.map(p => `
+           <div class="param-item">
+             <span class="param-key">${p}</span>
+             <span class="param-desc">Required</span>
+           </div>
+         `).join("")}
+       </div>`
+    : `<div class="param-list" style="text-align:center; color:#666;">No parameters required</div>`;
+
   mBody.innerHTML = `
-    <p>${e.desc}</p>
-    <p><strong>Method:</strong> ${e.method}</p>
-    ${e.params.length ? `<p><strong>Params:</strong> ${e.params.join(", ")}</p>` : ""}
-    <p><strong>Status:</strong> <span class="status ${e.isActive ? "active" : "inactive"}">${e.isActive ? "Active" : "Inactive"}</span></p>
-    <div class="code-snippet">curl -X ${e.method} "${url}"</div>
-    <div style="margin-top:1rem">
-      <button class="btn-copy" onclick="navigator.clipboard.writeText('${url}')">Copy URL</button>
-      <a href="${url}" target="_blank" style="margin-left:.5rem" class="btn-copy">Test</a>
+    <p style="color:var(--text-muted); margin-bottom:1rem;">${e.desc}</p>
+
+    ${paramsHtml}
+
+    <div class="code-block">curl -X ${e.method} "${url}"</div>
+
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="copyToClipboard('${url}')">
+        <i class="fas fa-copy"></i> Copy URL
+      </button>
+      <a href="${url}" target="_blank" class="btn-secondary" style="text-decoration:none; display:inline-flex; align-items:center; gap:.5rem;">
+        <i class="fas fa-external-link-alt"></i> Test
+      </a>
     </div>
   `;
+
   modal.classList.add("active");
 }
+
 function closeModal() {
   modal.classList.remove("active");
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Could add a toast here
+        const btn = document.querySelector(".btn-primary");
+        const original = btn.innerHTML;
+        btn.innerHTML = `<i class="fas fa-check"></i> Copied!`;
+        setTimeout(() => {
+            btn.innerHTML = original;
+        }, 2000);
+    });
 }
 
 /* ======  LIVE REQUEST COUNT  ====== */
@@ -444,9 +545,5 @@ async function fetchCount() {
     document.getElementById("req-count").textContent = "0";
   }
 }
-
-/* ======  UTILS  ====== */
-window.scrollToSection = (id) =>
-  document.getElementById(id).scrollIntoView({ behavior: "smooth" });
 
 init();
