@@ -414,7 +414,7 @@ function render(reset = true) {
 /* ======  SEARCH / FILTER  ====== */
 function bindEvents() {
   // Search
-  search.addEventListener("input", filter);
+  search.addEventListener("input", () => filter());
 
   // Category Click (Sidebar)
   document.querySelector(".nav-menu").addEventListener("click", (e) => {
@@ -422,7 +422,8 @@ function bindEvents() {
     if (!item) return;
 
     // Handle "Main" links specially or specific links
-    if(item.getAttribute("href") && item.getAttribute("href").startsWith("#")) return;
+    // Allow href="#" only if it's for category switching (has data-cat)
+    if(item.getAttribute("href") && item.getAttribute("href").startsWith("#") && !item.dataset.cat) return;
     if(item.target === "_blank") return;
 
     e.preventDefault();
