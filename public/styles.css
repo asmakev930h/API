@@ -3,18 +3,18 @@
     --bg-sidebar: #11121e;
     --bg-card: #161828;
     --bg-hover: #1e2136;
-
+    
     --primary: #00f2ff;
     --primary-dim: rgba(0, 242, 255, 0.1);
     --secondary: #7000ff;
     --accent: #ff0055;
-
+    
     --text-main: #ffffff;
     --text-muted: #8b9bb4;
-
+    
     --border: #2a2d45;
     --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-
+    
     --font-main: 'Space Grotesk', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 }
@@ -607,23 +607,23 @@ body {
     .sidebar {
         transform: translateX(-100%);
     }
-
+    
     .sidebar.open {
         transform: translateX(0);
     }
-
+    
     .main-content {
         margin-left: 0;
     }
-
+    
     .menu-toggle {
         display: block;
     }
-
+    
     .search-container {
         max-width: 200px;
     }
-
+    
     .hero-stats {
         grid-template-columns: 1fr;
     }

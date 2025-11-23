@@ -362,7 +362,7 @@ function init() {
 /* ======  CATEGORIES  ====== */
 function createSidebarCategories() {
   const cats = [...new Set(endpoints.map((e) => e.cat))].sort();
-
+  
   categoryList.innerHTML = cats
     .map((c) => `
       <div class="nav-item" data-cat="${c}">
@@ -379,12 +379,12 @@ function render(reset = true) {
     grid.innerHTML = "";
     page = 0;
   }
-
+  
   endpointCount.textContent = filtered.length;
-
+  
   // Calculate slice
   const slice = filtered.slice(page * perPage, (page + 1) * perPage);
-
+  
   slice.forEach((e) => {
     const card = document.createElement("div");
     card.className = "card";
@@ -414,17 +414,18 @@ function render(reset = true) {
 /* ======  SEARCH / FILTER  ====== */
 function bindEvents() {
   // Search
-  search.addEventListener("input", filter);
-
+  search.addEventListener("input", () => filter());
+  
   // Category Click (Sidebar)
   document.querySelector(".nav-menu").addEventListener("click", (e) => {
     const item = e.target.closest(".nav-item");
     if (!item) return;
-
+    
     // Handle "Main" links specially or specific links
-    if(item.getAttribute("href") && item.getAttribute("href").startsWith("#")) return;
+    // Allow href="#" only if it's for category switching (has data-cat)
+    if(item.getAttribute("href") && item.getAttribute("href").startsWith("#") && !item.dataset.cat) return;
     if(item.target === "_blank") return;
-
+    
     e.preventDefault();
 
     // Remove active class from all
@@ -462,7 +463,7 @@ function bindEvents() {
 
 function filter(category = null) {
   const term = search.value.toLowerCase();
-
+  
   // Determine current category if not passed
   let activeCat = category;
   if (!activeCat) {
@@ -475,7 +476,7 @@ function filter(category = null) {
     const matchesSearch = e.name.toLowerCase().includes(term) || e.desc.toLowerCase().includes(term);
     return matchesCat && matchesSearch;
   });
-
+  
   render();
 }
 
@@ -483,11 +484,11 @@ function filter(category = null) {
 function openModal(e) {
   mTitle.textContent = e.name;
   mMethod.textContent = e.method;
-
+  
   const url = `${baseURL}${e.path}`;
-
+  
   // Parameters HTML
-  const paramsHtml = e.params.length
+  const paramsHtml = e.params.length 
     ? `<div class="param-list">
          ${e.params.map(p => `
            <div class="param-item">
@@ -500,11 +501,11 @@ function openModal(e) {
 
   mBody.innerHTML = `
     <p style="color:var(--text-muted); margin-bottom:1rem;">${e.desc}</p>
-
+    
     ${paramsHtml}
-
+    
     <div class="code-block">curl -X ${e.method} "${url}"</div>
-
+    
     <div class="modal-actions">
       <button class="btn-primary" onclick="copyToClipboard('${url}')">
         <i class="fas fa-copy"></i> Copy URL
@@ -514,7 +515,7 @@ function openModal(e) {
       </a>
     </div>
   `;
-
+  
   modal.classList.add("active");
 }
 
