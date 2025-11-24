@@ -2,7 +2,7 @@
 const endpoints = [
   {
     name: "All-in-one",
-    path: "/api/all-in-one?url=https://fb.com/video",
+    path: "/api/all-in-one?url=https://www.facebook.com/share/r/1DBoWTyj7W/",
     method: "GET",
     params: ["url"],
     desc: "Download any social-media video",
@@ -461,19 +461,28 @@ function bindEvents() {
   });
 }
 
+// FIXED FILTER FUNCTION
 function filter(category = null) {
-  const term = search.value.toLowerCase();
+  // Safe term extraction
+  const term = search.value ? search.value.toLowerCase().trim() : "";
   
   // Determine current category if not passed
   let activeCat = category;
   if (!activeCat) {
       const activeEl = document.querySelector(".nav-item.active");
-      activeCat = activeEl ? activeEl.dataset.cat : "All";
+      // Safety: If activeEl has no dataset or doesn't exist, default to "All"
+      activeCat = (activeEl && activeEl.dataset.cat) ? activeEl.dataset.cat : "All";
   }
 
   filtered = endpoints.filter((e) => {
+    // Category match
     const matchesCat = activeCat === "All" || e.cat === activeCat;
-    const matchesSearch = e.name.toLowerCase().includes(term) || e.desc.toLowerCase().includes(term);
+    
+    // Safe Search match (checking if name/desc exist first)
+    const name = e.name ? e.name.toLowerCase() : "";
+    const desc = e.desc ? e.desc.toLowerCase() : "";
+    const matchesSearch = name.includes(term) || desc.includes(term);
+    
     return matchesCat && matchesSearch;
   });
   
