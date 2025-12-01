@@ -6,54 +6,7 @@ const express = require("express");
 const fileUpload = require('express-fileupload');
 const { MongoClient } = require('mongodb');
 
-// Import your plugins
-const countryPlug = require('./plugins/country');
-const cecanPlug = require('./plugins/cecan');
-const darePlug = require('./plugins/dare');
-const truthPlug = require('./plugins/truth');
-const aniquotePlug = require('./plugins/aniquote');
-const flirtPlug = require('./plugins/flirt');
-const calPlug = require('./plugins/calculator');
-const convertPlug = require('./plugins/convert');
-const rizzPlug = require('./plugins/rizz');
-const quotePlug = require('./plugins/quote');
-const encodePlug = require('./plugins/encode');
-const decodePlug = require('./plugins/decoder');
-const waifuPlug = require('./plugins/waifu');
-const jokePlug = require('./plugins/joke');
-const obfPlug = require('./plugins/obf');
-const tinyurlPlug = require('./plugins/tinyurl');
-const ytmp3Plug = require('./plugins/ytmp3');
-const ytmp4Plug = require('./plugins/ytmp4');
-const tiktokPlug = require('./plugins/tiktok');
-const ytsPlug = require('./plugins/yts');
-const wachannelPlug = require('./plugins/wachannel')
-const animePlug = require('./plugins/anime');
-const xvidPlug = require('./plugins/xvideos');
-const hentaiPlug = require('./plugins/hentai');
-const npmcheckPlug = require('./plugins/npmcheck');
-const wallpaperPlugin = require('./plugins/wallpaper');
-const xsearchPlug = require('./plugins/xxxsearch');
-const screenshotPlug = require('./plugins/screenshot');
-const text2imagePlug = require('./plugins/text2image');
-const fontPlug = require('./plugins/font');
-const lyricsPlug = require('./plugins/lyrics');
-const mediafirePlug = require('./plugins/mediafire');
-const xnxxsearchPlug = require('./plugins/xnxxsearch');
-const moviedlPlug = require('./plugins/moviedl');
-const gpt3_5Plug = require('./plugins/gpt3.5');
-const instaplug = require('./plugins/instagram');
-const fbPlug = require('./plugins/facebook');
-const twitterPlug = require('./plugins/twitter');
-const spotifyPlug = require('./plugins/spotify');
-const aioPlug = require('./plugins/all-in-one');
-const shortclipPlug = require('./plugins/shortclip');
-const pinterestPlug = require('./plugins/pinterest');
-const apkdlPlug = require('./plugins/apkdl');
-const threadPlug = require('./plugins/thread');
-const translatePlug = require('./plugins/translate');
-const tiktok2Plug = require('./plugins/tiktok2');
-const uploadPlug = require('./plugins/upload');
+// Plugins are now loaded dynamically
 
 const blue = express();
 const PORT = process.env.PORT || 7860;
@@ -89,53 +42,34 @@ blue.use(async (req, res, next) => {
 
 /*====================================*/
 blue.use(fileUpload({ limits: { fileSize: 250 * 1024 * 1024 } }));
-blue.use(countryPlug);
-blue.use(cecanPlug);
-blue.use(jokePlug);
-blue.use(darePlug);
-blue.use(truthPlug);
-blue.use(aniquotePlug);
-blue.use(calPlug);
-blue.use(flirtPlug);
-blue.use(convertPlug);
-blue.use(rizzPlug);
-blue.use(quotePlug);
-blue.use(encodePlug);
-blue.use(decodePlug);
-blue.use(waifuPlug);
-blue.use(obfPlug);
-blue.use(tinyurlPlug);
-blue.use(ytmp3Plug);
-blue.use(ytmp4Plug);
-blue.use(tiktokPlug);
-blue.use(ytsPlug);
-blue.use(wachannelPlug);
-blue.use(animePlug);
-blue.use(xvidPlug);
-blue.use(hentaiPlug);
-blue.use(npmcheckPlug);
-blue.use(wallpaperPlugin);
-blue.use(xsearchPlug);
-blue.use(screenshotPlug);
-blue.use(text2imagePlug);
-blue.use(fontPlug);
-blue.use(lyricsPlug);
-blue.use(mediafirePlug);
-blue.use(xnxxsearchPlug);
-blue.use(moviedlPlug);
-blue.use(gpt3_5Plug);
-blue.use(instaplug);
-blue.use(fbPlug);
-blue.use(twitterPlug);
-blue.use(spotifyPlug);
-blue.use(aioPlug);
-blue.use(shortclipPlug);
-blue.use(pinterestPlug);
-blue.use(apkdlPlug);
-blue.use(threadPlug);
-blue.use(translatePlug);
-blue.use(tiktok2Plug);
-blue.use(uploadPlug);
+
+// Dynamically load plugins
+const pluginsDir = path.join(__dirname, 'plugins');
+
+try {
+    if (fs.existsSync(pluginsDir)) {
+        const files = fs.readdirSync(pluginsDir);
+        
+        // Filter and sort files to ensure consistent loading order (alphabetical)
+        const pluginFiles = files.filter(file => file.endsWith('.js')).sort();
+    
+        pluginFiles.forEach(file => {
+            try {
+                const pluginPath = path.join(pluginsDir, file);
+                const plugin = require(pluginPath);
+                blue.use(plugin);
+                console.log(`Loaded plugin: ${file}`);
+            } catch (err) {
+                console.error(`Error loading plugin ${file}:`, err);
+            }
+        });
+    } else {
+        console.error("Plugins directory not found:", pluginsDir);
+    }
+} catch (err) {
+    console.error('Error reading plugins directory:', err);
+}
+
 /*====================================*/
 
 // API endpoint to get total requests from MongoDB
